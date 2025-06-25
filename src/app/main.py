@@ -30,22 +30,24 @@ def main() -> None:
     prompt = """Ты - персональный секретарь, отсматривающий чат планёрки. 
     Ты получишь список сообщений одного конкретного сотрудника. 
     Это могут быть сообщения трёх видов: сообщения о начале работы со списком задач на сегодня, сообщения об окончании работы со списком задач на сегодня и другие сообщения. 
-    Твоя задача - выписать все задачи, которые выполнял и выполнил сотрудник. Учти, что одна и та же задача может быть указана в разных сообщениях по-разному. 
+    Твоя задача - выписать все задачи, которые выполнял и выполнил сотрудник. Учти, что одна и та же задача может быть указана в разных сообщениях по-разному. Каждую задачу добавляй отдельным пунктом. 
+    Используй следующий формат указания задач: "<group>. <task>", например "ЮКасса. Добавил методы для фронтенда".  
+    Постарайся извлечь максимум задач. Задачи по типу "написал таску для фронта" не учитывай.
     Верни ответ в формате JSON."""
     message_texts = json.dumps([m.text for m in my_messages_since_june], ensure_ascii=False)
 
     response = completion(
-        "openai/o4-mini",
+        "openai/gpt-4.1",
         messages=[
             {"role": "developer", "content": prompt},
             {"role": "user", "content": message_texts},
         ],
         response_format=ResponseFormat,
-        max_completion_tokens=50000,
+        max_completion_tokens=32768,
     )
 
     with open("ai-result.json", "w") as ai_result_file:
-        ai_result_file.write(json.dumps(json.loads(response.messages[0].content), ensure_ascii=False, indent=2))
+        ai_result_file.write(json.dumps(json.loads(response.choices[0].message.content), ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

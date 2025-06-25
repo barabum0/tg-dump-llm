@@ -20,3 +20,7 @@ class TelegramMessage(BaseModel):
 class TelegramDump(BaseModel):
     name: str
     messages: list[TelegramMessage]
+
+    @property
+    def authors(self) -> dict[str, str]:
+        return {m.author_id: m.author_name for m in self.messages}
